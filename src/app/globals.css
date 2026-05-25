@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "SF Pro Display", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+html, body { background: #0a0a0a; color: #f6f5f1; }
+body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+
+::selection { background: #f6f5f1; color: #0a0a0a; }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid #f6f5f1;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Subtle fade-in for page content */
+.fade-in {
+  animation: fadeIn 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Editorial display heading */
+.h-display {
+  font-family: var(--font-display);
+  font-weight: 200;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  font-size: 11px;
+  color: #a8a29e;
+}
+
+/* Masonry via CSS columns — graceful, simple, fast */
+.masonry {
+  column-gap: 12px;
+}
+@media (min-width: 640px)  { .masonry { column-count: 2; } }
+@media (min-width: 1024px) { .masonry { column-count: 3; } }
+@media (min-width: 1536px) { .masonry { column-count: 4; } }
+.masonry > * { break-inside: avoid; margin-bottom: 12px; }

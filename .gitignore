@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env*.local
+*.log
+.DS_Store
+.vercel
+next-env.d.ts
+
+# Image working dirs (large) - keep originals out of git
+scripts/.dropbox-cache/
+public/gallery/originals/
