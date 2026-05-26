@@ -2,12 +2,13 @@ import LoginForm from './LoginForm';
 
 export const metadata = { title: 'Private Entry' };
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
-  searchParams?: { next?: string };
+  searchParams?: Promise<{ next?: string }>;
 }) {
-  const next = searchParams?.next && searchParams.next.startsWith('/') ? searchParams.next : '/';
+  const params = (await searchParams) ?? {};
+  const next = params.next && params.next.startsWith('/') ? params.next : '/';
   return (
     <main className="min-h-[100svh] flex items-center justify-center px-6">
       <div className="w-full max-w-md text-center fade-in">
