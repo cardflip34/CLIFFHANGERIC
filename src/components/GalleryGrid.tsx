@@ -129,11 +129,6 @@ export default function GalleryGrid({ images }: { images: GalleryImage[] }) {
               className="max-h-[90vh] w-auto h-auto object-contain"
               priority
             />
-            {current.caption && (
-              <div className="absolute bottom-3 left-0 right-0 text-center text-stone text-xs tracking-wider">
-                {current.caption}
-              </div>
-            )}
             <div className="absolute top-5 left-5 text-[11px] uppercase tracking-[0.32em] text-stone">
               {String((index ?? 0) + 1).padStart(2, '0')} / {String(images.length).padStart(2, '0')}
             </div>
