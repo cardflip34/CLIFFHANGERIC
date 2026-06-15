@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
+import {
+  SESSION_COOKIE,
+  createSessionToken,
+  sessionCookieOptions,
+  verifySessionToken,
+} from '@/lib/auth';
 
 export const config = {
   // Run on everything except Next internals, API auth routes, and public assets.
@@ -12,6 +17,13 @@ export async function middleware(req: NextRequest) {
   if (ok) {
     const res = NextResponse.next();
     res.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    // Sliding 30-minute idle window: re-issue the cookie on every valid request.
+    const refreshed = await createSessionToken();
+    res.cookies.set({
+      name: SESSION_COOKIE,
+      value: refreshed,
+      ...sessionCookieOptions(),
+    });
     return res;
   }
   const url = req.nextUrl.clone();

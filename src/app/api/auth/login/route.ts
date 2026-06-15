@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_COOKIE, SESSION_MAX_AGE_SECONDS, createSessionToken } from '@/lib/auth';
+import { SESSION_COOKIE, createSessionToken, sessionCookieOptions } from '@/lib/auth';
 import { clientIpFromHeaders, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -58,11 +58,7 @@ export async function POST(req: NextRequest) {
   res.cookies.set({
     name: SESSION_COOKIE,
     value: token,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: SESSION_MAX_AGE_SECONDS,
+    ...sessionCookieOptions(),
   });
   return res;
 }

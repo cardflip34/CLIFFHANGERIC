@@ -1,7 +1,10 @@
 // Edge-compatible HMAC session helpers. No Node `crypto` imports — only Web Crypto.
 
 export const SESSION_COOKIE = 'cliff_session';
-export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 14; // 14 days
+// Idle timeout: every authenticated request slides the token's exp forward by
+// this many seconds. The Set-Cookie itself has no Max-Age/Expires, so closing
+// the browser drops it regardless.
+export const SESSION_TTL_SECONDS = 60 * 30; // 30 minutes
 
 const enc = new TextEncoder();
 
@@ -43,12 +46,24 @@ function getSecret(): string {
   return s;
 }
 
-// Token format: <expIso>.<sig>   where sig = HMAC(secret, expIso)
-export async function createSessionToken(maxAgeSeconds = SESSION_MAX_AGE_SECONDS): Promise<string> {
-  const exp = Date.now() + maxAgeSeconds * 1000;
+// Token format: <expMs>.<sig>   where sig = HMAC(secret, expMs)
+export async function createSessionToken(ttlSeconds = SESSION_TTL_SECONDS): Promise<string> {
+  const exp = Date.now() + ttlSeconds * 1000;
   const payload = String(exp);
   const sig = await hmac(getSecret(), payload);
   return `${payload}.${sig}`;
+}
+
+// Cookie options for the session cookie. Intentionally omits maxAge/expires so
+// the browser treats it as a session cookie (cleared when the browser closes).
+// The token's HMAC-signed exp enforces the 30-minute idle timeout server-side.
+export function sessionCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    path: '/',
+  };
 }
 
 export async function verifySessionToken(token: string | undefined | null): Promise<boolean> {
